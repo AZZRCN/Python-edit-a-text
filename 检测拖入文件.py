@@ -20,26 +20,16 @@ def editfile():
     text.grid(column=0, row=1)
     if (path != ""):
         try:
-            try:
-                text.insert('1.0', str(open(path, encoding='utf-8').read()))
-            except BaseException:
-                text.insert('1.0', str(open(path, encoding='gbk').read()))
-            showerror(title="错误!",message="这个文件可能不是正规txt?")
+            text.insert('1.0', str(open(path, encoding='utf-8').read()))
         except BaseException:
-            showerror("Error!","错误的编码")
-            return
+            text.insert('1.0', str(open(path, encoding='gbk').read()))
     def 保存():
         global path
         if (path == ""):
             path = filedialog.asksaveasfilename()
         else:
             filenewpath = path
-        print(filenewpath)
-        if(os.path.isfile(filenewpath)):
-            os.remove(filenewpath)
-        f = open(filenewpath, "w")
-        f.write(text.get('1.0', tk.END))
-        f.close()
+        open(filenewpath, "w").write(text.get('1.0', tk.END))
 
     def 新建():
         nonlocal text
@@ -49,10 +39,10 @@ def editfile():
         text = tk.Text(master=top)
         text.grid(column=0, row=1, columnspan=3)
 
-    def 高exit():
+    def 退出():
         root.quit()
 
-    def 低exit():
+    def 取消():
         top.destroy()
 
     def 制作二维码():
@@ -62,18 +52,15 @@ def editfile():
             if (event.keycode == 27):  # Esc
                 qrcode_info.destroy()
         qrcode_info.bind("<Key>", Esc)
-        version_label = tk.Label(master=qrcode_info, text="二维码大小:")
-        version_label.grid(column=3, row=3)
+        tk.Label(master=qrcode_info, text="二维码大小:").grid(column=3, row=3)
         版本 = tk.Entry(master=qrcode_info, width=2)
         版本.grid(column=4, row=3)
         版本.insert('0', "1")
-        error_correlation_label = tk.Label(master=qrcode_info, text="纠错能力:")
-        error_correlation_label.grid(column=5, row=3)
+        tk.Label(master=qrcode_info, text="纠错能力:").grid(column=5, row=3)
         纠错 = tk.Entry(master=qrcode_info, width=1)
         纠错.grid(column=6, row=3)
-        纠错.insert('0', "1")
-        box_size_label = tk.Label(master=qrcode_info, text="单像素大小:")
-        box_size_label.grid(column=3, row=4)
+        纠错.insert('0', "1~4")
+        tk.Label(master=qrcode_info, text="像素大小:").grid(column=3, row=4)
         单像素大小 = tk.Entry(master=qrcode_info, width=2)
         单像素大小.grid(column=4, row=4)
         单像素大小.insert('0', "1")
@@ -89,18 +76,10 @@ def editfile():
         def use_info():
             nonlocal text
             nonlocal 信息
-            # 信息.destroy()
-            # 信息 = tk.Entry(master=qrcode_info)
-            # 信息.grid(column=4, row=5, columnspan=3)
-            # delete(a,b)删除从a到b
             信息.delete(0, tk.END)
             信息.insert(0, text.get('1.0', tk.END))
         文本 = tk.Button(master=qrcode_info, text="用文本内信息", command=use_info)
         文本.grid(column=5, row=7)
-        def warning():
-            messagebox.showinfo(title="注意:",
-                     message="纠错值:0(7%),1(15%),2(25%),3(30%)"
-                     )
         def make():
             nonlocal 版本
             nonlocal 纠错
@@ -120,8 +99,6 @@ def editfile():
             if messagebox.askokcancel():
                 pyperclip.copy(qr)
             del qr
-        注意事项 = tk.Button(master=qrcode_info, text="注意事项", command=warning)
-        注意事项.grid(column=4, row=7)
         制作 = tk.Button(master=qrcode_info, text="制作", command=make)
         制作.grid(column=3, row=7)
 
@@ -136,22 +113,9 @@ def editfile():
             text = tk.Text(master=top)
             text.grid(column=0, row=1, columnspan=3)
             try:
-                with open(path, encoding="utf-8") as f:
-                    text.insert('1.0', str(f.read()))
+                text.insert('1.0', str(open(path, encoding="utf-8").read()))
             except BaseException:
-                try:
-                    with open(path, encoding="gbk") as f:
-                        text.insert('1.0', str(f.read()))
-                except BaseException:
-                    try:
-                        with open(path, encoding="gbuu312") as f:
-                            text.insert('1.0', str(f.read()))
-                    except BaseException:
-                        try:
-                            with open(path, encoding="Unicode") as f:
-                                text.insert('1.0', str(f.read()))
-                        except BaseException:
-                            messagebox.showerror(title="错误!", message="这个文件编码不太常见!")
+                text.insert('1.0', str(open(path, encoding="gbk").read()))
         else:
             messagebox.showerror("错了!", "选个真的txt")
 
@@ -164,24 +128,15 @@ def editfile():
     top['menu'] = menubar  # 顶级窗口能使用菜单
     file_menu = tk.Menu(menubar, tearoff=0)
     test_menu = tk.Menu(menubar, tearoff=0)
-    member_list = [["文件", "file_menu"],
-                   ["测试", "test_menu"]]  # 总菜单列表
-    for i in member_list:
-        exec("menubar.add_cascade(label='"+i[0]+"', menu="+i[1]+")")
-
-    def 新建快捷(event): 新建()
-    text.bind("<Control-n>", 新建快捷)
-    def 打开快捷(event): 打开()
-    top.bind("<Control-o>", 打开快捷)
-    def 保存快捷(event): 保存()
-    top.bind("<Control-s>", 保存快捷)
-    file_menu.add_command(label="新建", command=新建, accelerator='Ctrl+N')
-    file_menu.add_command(label="打开", command=打开, accelerator='Ctrl+O')
-    file_menu.add_command(label="保存", command=保存, accelerator='Ctrl+S')
-    file_menu.add_command(label="取消", command=低exit)
-    file_menu.add_command(label="退出", command=高exit)
+    menubar.add_cascade(label="文件", menu=file_menu)
+    menubar.add_cascade(label="测试", menu=test_menu)
+    file_menu.add_command(label="新建", command=新建)
+    file_menu.add_command(label="打开", command=打开)
+    file_menu.add_command(label="保存", command=保存)
+    file_menu.add_command(label="取消", command=取消)
+    file_menu.add_command(label="退出", command=退出)
     file_menu.add_command(label="生成二维码", command=制作二维码)
-    file_menu.add_command(label="时间", command=get_time)
+    file_menu.add_command(label="插入时间", command=get_time)
     # 为列表中添加内容
 
 
