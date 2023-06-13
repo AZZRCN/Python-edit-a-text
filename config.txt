@@ -1,2 +1,2 @@
-main-bg="afbujkfd"
-edit-bg=""
+main-bg:edit.png
+edit-bg:

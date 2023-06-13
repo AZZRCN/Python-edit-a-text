@@ -1,3 +1,4 @@
 {
-    "workbench.view.alwaysShowHeaderActions": true
+    "workbench.view.alwaysShowHeaderActions": true,
+    "python.analysis.typeCheckingMode": "off"
 }
