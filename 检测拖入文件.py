@@ -1,3 +1,4 @@
+from turtle import width
 from windnd import hook_dropfiles
 from base64 import b64decode
 from base64 import b64encode
@@ -15,6 +16,7 @@ from tkinter import Toplevel
 from tkinter import Button
 from tkinter import Entry
 from tkinter import OptionMenu
+from tkinter import Scale
 from tkinter import Text
 from tkinter import Menu
 from tkinter import Tk
@@ -32,7 +34,7 @@ def useinfo(from_:Entry|Text|ScrolledText,
     Entry:from_index是None, to_index是'x'(str)|x(int)\n
     Text|ScrolledText:from_index是('x.x','x.x')(tuple,str,两个), to_index是'x.x'(str)
     """
-    if(type(from_) == Entry and (from_index[0].split('.') > 1 or len(from_index[1].split('.')) > 1)):#小大
+    if(type(from_) == Entry and (from_index != None)):#小大
         print("E1")
         return
     if((type(from_) == Text or type(from_) == ScrolledText) and (len(from_index[0].split('.')) == 1 or (from_index[1] != 'end' and len(from_index[1].split('.')) == 1))):#大小
@@ -59,7 +61,7 @@ def useinfo(from_:Entry|Text|ScrolledText,
 def editfile():
     global path
     top = Toplevel(root)
-    text = ScrolledText(master=top)
+    text = ScrolledText(master=top,width=20,height=20)
     text.grid(column=0, row=1)
     if (path != ""):
         try:
@@ -152,7 +154,25 @@ def editfile():
             Button(master=temp,text="复制",command=lambda:copy(t)).grid(column=1,row=0)
         makebutton = Button(master=hash_top,text="制作",command=make)
         makebutton.grid(column=0,row=1)
-        
+    def 大小():
+        size_top = Toplevel(master=top)
+        #example:
+        #x:6.9629629...
+        #y:13.166...
+        def hup():text.configure(height=int(text.winfo_height()/13) + 1)
+        def hdown():text.configure(height=int(text.winfo_height()/13) - 1)
+        def wup():text.configure(width=int(text.winfo_width()/7) + 1)
+        def wdown():text.configure(width=int(text.winfo_width()/7) - 1)
+        Button(master=size_top,text="↑",command=hdown).grid(column=0,row=0)
+        Button(master=size_top,text="←",command=wdown).grid(column=2,row=0)
+        Button(master=size_top,text="↓",command=hup).grid(column=0,row=1)
+        Button(master=size_top,text="→",command=wup).grid(column=2,row=1)
+        x = Scale(master=size_top,from_=1,to=100,tickinterval=5,length=200)
+        x.grid(column=1,row=0,rowspan=2)
+        y = Scale(master=size_top,from_=1,to=100,tickinterval=5,length=200)
+        y.grid(column=3,row=0,rowspan=2)
+        def csize():text.configure(width=y.get(),height=x.get())
+        Button(master=size_top,text="生效",command=csize).grid(row = 3,column=0,columnspan=4)
         
     menubar = Menu(top)  # 菜单
     top['menu'] = menubar  # 顶级窗口能使用菜单
@@ -171,6 +191,7 @@ def editfile():
     file_menu.add_command(label="插入时间", command=获取时间)
     tool_menu.add_command(label="编->base64<-解", command=b64编码解码)
     tool_menu.add_command(label="哈希", command=计算哈希)
+    test_menu.add_command(label="更改尺寸", command=大小)
 
 
 def dropfile(filename):
